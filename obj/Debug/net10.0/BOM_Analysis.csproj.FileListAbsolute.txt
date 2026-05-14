@@ -1,0 +1,14 @@
+C:\Tutorial\BOM_Analysis\bin\Debug\net10.0\BOM_Analysis.exe
+C:\Tutorial\BOM_Analysis\bin\Debug\net10.0\BOM_Analysis.deps.json
+C:\Tutorial\BOM_Analysis\bin\Debug\net10.0\BOM_Analysis.runtimeconfig.json
+C:\Tutorial\BOM_Analysis\bin\Debug\net10.0\BOM_Analysis.dll
+C:\Tutorial\BOM_Analysis\bin\Debug\net10.0\BOM_Analysis.pdb
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.GeneratedMSBuildEditorConfig.editorconfig
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.AssemblyInfoInputs.cache
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.AssemblyInfo.cs
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.csproj.CoreCompileInputs.cache
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.dll
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\refint\BOM_Analysis.dll
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.pdb
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\BOM_Analysis.genruntimeconfig.cache
+C:\Tutorial\BOM_Analysis\obj\Debug\net10.0\ref\BOM_Analysis.dll

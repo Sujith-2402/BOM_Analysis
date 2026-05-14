@@ -1,0 +1,2 @@
+C:\Tutorial\BOM_Analysis\publish\BOM_Analysis.pdb
+C:\Tutorial\BOM_Analysis\publish\BOM_Analysis.exe
