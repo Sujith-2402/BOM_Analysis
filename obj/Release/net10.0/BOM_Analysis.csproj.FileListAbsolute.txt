@@ -12,3 +12,5 @@ C:\Tutorial\BOM_Analysis\obj\Release\net10.0\refint\BOM_Analysis.dll
 C:\Tutorial\BOM_Analysis\obj\Release\net10.0\BOM_Analysis.pdb
 C:\Tutorial\BOM_Analysis\obj\Release\net10.0\BOM_Analysis.genruntimeconfig.cache
 C:\Tutorial\BOM_Analysis\obj\Release\net10.0\ref\BOM_Analysis.dll
+C:\Tutorial\BOM_Analysis\obj\Release\net10.0\BOM_Analysis.sourcelink.json
+C:\Tutorial\BOM_Analysis\bin\Release\net10.0\Bom_Analysis_Config.xml

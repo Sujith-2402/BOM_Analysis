@@ -21,6 +21,7 @@ internal static class Program
 
         try
         {
+            var config = AppConfig.Load();
             var inputListPath = args.Length > 0 ? args[0] : PromptForExistingFile("Enter 1st input file path");
             var relationPath = args.Length > 1 ? args[1] : PromptForExistingFile("Enter 2nd input file path");
             var outputFolder = args.Length > 2 ? args[2] : PromptForOutputFolder("Enter output folder path");
@@ -34,6 +35,10 @@ internal static class Program
             Log(log, $"Input file 1: {inputListPath}");
             Log(log, $"Input file 2: {relationPath}");
             Log(log, $"Output folder: {outputFolder}");
+            Log(log, $"Config file: {config.ConfigPath}");
+            Log(log, $"Replace common path enabled: {config.ReplaceCommonPath}");
+            Log(log, $"Path to replace: {config.PathToReplace}");
+            Log(log, $"Replacement text: {config.ReplacementText}");
 
             var locations = InputReader.ReadRows(inputListPath)
                 .SelectMany(row => row)
@@ -71,14 +76,14 @@ internal static class Program
                 if (children.Count == 0)
                 {
                     parentOnlyRows++;
-                    AddRow(parent, child: "", childCount: 0, exactLocations, fileNames, allRows, orphanRows);
+                    AddRow(parent, child: "", childCount: 0, exactLocations, fileNames, config, allRows, orphanRows);
                     Log(log, $"Skipped row with no child: {parent}");
                     continue;
                 }
 
                 foreach (var child in children)
                 {
-                    var row = CreateReportRow(parent, child, children.Count, exactLocations, fileNames);
+                    var row = CreateReportRow(parent, child, children.Count, exactLocations, fileNames, config);
                     allRows.Add(row);
                     if (children.Count > 1)
                     {
@@ -94,17 +99,17 @@ internal static class Program
                     continue;
                 }
 
-                AddRow(drawing, child: "", childCount: 0, exactLocations, fileNames, allRows, orphanRows);
+                AddRow(drawing, child: "", childCount: 0, exactLocations, fileNames, config, allRows, orphanRows);
                 Log(log, $"2D orphan found from input file 1: {drawing}");
             }
 
             var outputPath = Path.Combine(outputFolder, $"BOM_Analysis_Output_{timestamp}.xlsx");
-            ExcelWriter.Write(outputPath,
-            [
-                new ExcelSheet("BOM Analysis", Headers, allRows),
-                new ExcelSheet("2D_Orphans", Headers, orphanRows),
-                new ExcelSheet("2D_WithMultiple_3D", Headers, multiRows)
-            ]);
+            var orphanOutputPath = Path.Combine(outputFolder, $"BOM_Analysis_2D_Orphans_{timestamp}.xlsx");
+            var multiOutputPath = Path.Combine(outputFolder, $"BOM_Analysis_2D_WithMultiple_3D_{timestamp}.xlsx");
+
+            ExcelWriter.Write(outputPath, [new ExcelSheet("BOM Analysis", Headers, allRows)]);
+            ExcelWriter.Write(orphanOutputPath, [new ExcelSheet("2D_Orphans", Headers, orphanRows)]);
+            ExcelWriter.Write(multiOutputPath, [new ExcelSheet("2D_WithMultiple_3D", Headers, multiRows)]);
 
             Log(log, $"Location entries read: {locations.Count}");
             Log(log, $"Relationship rows read: {relationRows.Count}");
@@ -113,12 +118,16 @@ internal static class Program
             Log(log, $"2D orphan rows generated: {orphanRows.Count}");
             Log(log, $"Multiple 3D rows generated: {multiRows.Count}");
             Log(log, $"Excel output: {outputPath}");
+            Log(log, $"2D orphan Excel output: {orphanOutputPath}");
+            Log(log, $"2D with multiple 3D Excel output: {multiOutputPath}");
             Log(log, "Completed successfully.");
 
             Console.WriteLine();
             Console.WriteLine("Completed successfully.");
-            Console.WriteLine($"Excel output: {outputPath}");
-            Console.WriteLine($"Log file:     {logPath}");
+            Console.WriteLine($"Excel output:       {outputPath}");
+            Console.WriteLine($"2D orphans:         {orphanOutputPath}");
+            Console.WriteLine($"2D multiple 3D:     {multiOutputPath}");
+            Console.WriteLine($"Log file:           {logPath}");
             return 0;
         }
         catch (Exception ex)
@@ -136,10 +145,11 @@ internal static class Program
         int childCount,
         HashSet<string> exactLocations,
         HashSet<string> fileNames,
+        AppConfig config,
         List<string[]> allRows,
         List<string[]> orphanRows)
     {
-        var row = CreateReportRow(parent, child, childCount, exactLocations, fileNames);
+        var row = CreateReportRow(parent, child, childCount, exactLocations, fileNames, config);
         allRows.Add(row);
         orphanRows.Add(row);
     }
@@ -149,20 +159,21 @@ internal static class Program
         string child,
         int childCount,
         HashSet<string> exactLocations,
-        HashSet<string> fileNames)
+        HashSet<string> fileNames,
+        AppConfig config)
     {
         var hasChild = IsPresent(child);
         var childName = hasChild ? Path.GetFileName(child) : "";
 
         return
         [
-            parent,
+            config.DisplayPath(parent),
             Path.GetFileName(parent),
             Path.GetExtension(parent),
             ExtractRevision(parent),
             childCount == 0 ? "TRUE" : "FALSE",
             childCount > 1 ? "TRUE" : "FALSE",
-            child,
+            hasChild ? config.DisplayPath(child) : "",
             childName,
             hasChild ? Path.GetExtension(child) : "",
             hasChild ? ExtractRevision(child) : "",
@@ -302,6 +313,63 @@ internal static class InputReader
             ? strings[index]
             : value;
     }
+}
+
+internal sealed record AppConfig(
+    string ConfigPath,
+    bool ReplaceCommonPath,
+    string PathToReplace,
+    string ReplacementText)
+{
+    private const string FileName = "Bom_Analysis_Config.xml";
+
+    public static AppConfig Load()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, FileName);
+
+        if (!File.Exists(path))
+        {
+            CreateDefault(path);
+        }
+
+        var document = XDocument.Load(path);
+        var replaceNode = document.Root?.Element("ReplaceCommonPath");
+        var enabledText = replaceNode?.Attribute("Enabled")?.Value
+            ?? replaceNode?.Element("Enabled")?.Value
+            ?? "false";
+
+        return new AppConfig(
+            path,
+            bool.TryParse(enabledText, out var enabled) && enabled,
+            Clean(replaceNode?.Element("PathToReplace")?.Value ?? ""),
+            Clean(replaceNode?.Element("ReplacementText")?.Value ?? "..."));
+    }
+
+    public string DisplayPath(string path)
+    {
+        if (!ReplaceCommonPath || string.IsNullOrWhiteSpace(PathToReplace) || string.IsNullOrEmpty(path))
+        {
+            return path;
+        }
+
+        return path.StartsWith(PathToReplace, StringComparison.OrdinalIgnoreCase)
+            ? ReplacementText + path[PathToReplace.Length..]
+            : path;
+    }
+
+    private static void CreateDefault(string path)
+    {
+        var document = new XDocument(
+            new XElement("BomAnalysisConfig",
+                new XElement("ReplaceCommonPath",
+                    new XAttribute("Enabled", "false"),
+                    new XElement("PathToReplace", @"D:\PLM TeamcenterX\DEV\R1_SolidWorks"),
+                    new XElement("ReplacementText", "..."))));
+
+        document.Save(path);
+    }
+
+    private static string Clean(string value) => new string(value.Where(XmlConvert.IsXmlChar).ToArray()).Trim().Trim('"');
 }
 
 internal sealed record ExcelSheet(string Name, IReadOnlyList<string> Headers, IReadOnlyList<string[]> Rows);

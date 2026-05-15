@@ -1,0 +1,16 @@
+2026-05-14 17:47:15 - Started BOM Analysis.
+2026-05-14 17:47:15 - Input file 1: .\sample_input1.txt
+2026-05-14 17:47:15 - Input file 2: .\sample_input2.txt
+2026-05-14 17:47:15 - Output folder: .\sample_output_config_test
+2026-05-14 17:47:15 - Config file: C:\Tutorial\BOM_Analysis\bin\Release\net10.0\Bom_Analysis_Config.xml
+2026-05-14 17:47:15 - Replace common path enabled: False
+2026-05-14 17:47:15 - Path to replace: D:\PLM TeamcenterX\DEV\R1_SolidWorks
+2026-05-14 17:47:15 - Replacement text: ...
+2026-05-14 17:47:15 - Location entries read: 3
+2026-05-14 17:47:15 - Relationship rows read: 1
+2026-05-14 17:47:15 - Report rows generated: 2
+2026-05-14 17:47:15 - Rows without children in relationship file: 0
+2026-05-14 17:47:15 - 2D orphan rows generated: 0
+2026-05-14 17:47:15 - Multiple 3D rows generated: 2
+2026-05-14 17:47:15 - Excel output: .\sample_output_config_test\BOM_Analysis_Output_20260514_174715.xlsx
+2026-05-14 17:47:15 - Completed successfully.

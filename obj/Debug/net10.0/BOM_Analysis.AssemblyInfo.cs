@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BOM_Analysis")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+683c911114af143a02a3f25a21b925b1fb74e9a8")]
 [assembly: System.Reflection.AssemblyProductAttribute("BOM_Analysis")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BOM_Analysis")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
