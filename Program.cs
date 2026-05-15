@@ -341,8 +341,16 @@ internal sealed record AppConfig(
         return new AppConfig(
             path,
             bool.TryParse(enabledText, out var enabled) && enabled,
-            Clean(replaceNode?.Element("PathToReplace")?.Value ?? ""),
-            Clean(replaceNode?.Element("ReplacementText")?.Value ?? "..."));
+            Clean(
+                replaceNode?.Attribute("commonPathToReplace")?.Value
+                ?? replaceNode?.Attribute("PathToReplace")?.Value
+                ?? replaceNode?.Element("PathToReplace")?.Value
+                ?? ""),
+            Clean(
+                replaceNode?.Attribute("replaceWith")?.Value
+                ?? replaceNode?.Attribute("ReplacementText")?.Value
+                ?? replaceNode?.Element("ReplacementText")?.Value
+                ?? "..."));
     }
 
     public string DisplayPath(string path)
@@ -363,8 +371,8 @@ internal sealed record AppConfig(
             new XElement("BomAnalysisConfig",
                 new XElement("ReplaceCommonPath",
                     new XAttribute("Enabled", "false"),
-                    new XElement("PathToReplace", @"D:\PLM TeamcenterX\DEV\R1_SolidWorks"),
-                    new XElement("ReplacementText", "..."))));
+                    new XAttribute("commonPathToReplace", @"D:\PLM TeamcenterX\DEV\R1_SolidWorks"),
+                    new XAttribute("replaceWith", "..."))));
 
         document.Save(path);
     }

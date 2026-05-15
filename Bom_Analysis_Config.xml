@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BomAnalysisConfig>
-  <ReplaceCommonPath Enabled="false">
-    <PathToReplace>D:\PLM TeamcenterX\DEV\R1_SolidWorks</PathToReplace>
-    <ReplacementText>...</ReplacementText>
-  </ReplaceCommonPath>
+  <ReplaceCommonPath Enabled="false" commonPathToReplace="D:\PLM TeamcenterX\DEV\R1_SolidWorks" replaceWith="..." />
 </BomAnalysisConfig>
